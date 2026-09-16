@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Tablero Oculto">
+  <rect width="512" height="512" rx="96" fill="#172033"/>
+  <path d="M256 64 408 152v208L256 448 104 360V152L256 64Z" fill="#f8fafc"/>
+  <path d="M256 106 370 172v168l-114 66-114-66V172l114-66Z" fill="#2563eb"/>
+  <path d="M256 152 330 194v84l-74 42-74-42v-84l74-42Z" fill="#16a34a"/>
+  <path d="M256 196 292 216v40l-36 20-36-20v-40l36-20Z" fill="#7c3aed"/>
+  <path d="M104 152 256 240 408 152" fill="none" stroke="#172033" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M256 240v208" fill="none" stroke="#172033" stroke-width="18" stroke-linecap="round"/>
+</svg>

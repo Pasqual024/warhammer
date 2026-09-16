@@ -1,0 +1,216 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Player {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  passwordHash String
+  factionName  String
+  code         Int?     @unique
+  shortCode    String?
+  colorName    String?
+  colorHex     String?
+  role         String   @default("player")
+  createdAt    DateTime @default(now())
+
+  moves                   Move[]
+  submissions             PhaseSubmission[]
+  encounterParticipations EncounterParticipant[]
+  resolutionConfirmations EncounterResolutionConfirmation[]
+  wonEncounters           Encounter[]                       @relation("EncounterWinner")
+  profileTabs             PlayerProfileTabs[]
+  turnEconomies           PlayerTurnEconomy[]
+}
+
+model Game {
+  id           String   @id @default(cuid())
+  name         String
+  currentTurn  Int      @default(1)
+  currentPhase Int      @default(1)
+  currentState String   @default("movement_open")
+  status       String   @default("active")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  moves         Move[]
+  submissions   PhaseSubmission[]
+  encounters    Encounter[]
+  announcements PhaseAnnouncement[]
+  profileTabs   PlayerProfileTabs[]
+  turnEconomies PlayerTurnEconomy[]
+}
+
+model PlayerProfileTabs {
+  id           String   @id @default(cuid())
+  gameId       String
+  playerId     String
+  armyListData String   @default("{}")
+  diaryData    String   @default("{}")
+  updatedAt    DateTime @updatedAt
+
+  game   Game   @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  player Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  @@unique([gameId, playerId])
+  @@index([playerId])
+}
+
+model PlayerTurnEconomy {
+  id           String   @id @default(cuid())
+  gameId       String
+  playerId     String
+  turnNumber   Int
+  invertirData String   @default("{}")
+  ingresarData String   @default("{}")
+  updatedAt    DateTime @updatedAt
+
+  game   Game   @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  player Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  @@unique([gameId, playerId, turnNumber])
+  @@index([playerId, turnNumber])
+}
+
+model Cell {
+  id       String  @id
+  col      String
+  row      Int
+  isActive Boolean @default(true)
+
+  moves             Move[]
+  specialZoneCells  SpecialZoneCell[]
+  encounters        Encounter[]
+  phaseAnnouncements PhaseAnnouncement[]
+
+  @@index([row, col])
+}
+
+model SpecialZone {
+  id        String   @id @default(cuid())
+  name      String
+  type      String
+  colorRule String?
+  createdAt DateTime @default(now())
+
+  cells SpecialZoneCell[]
+
+  @@unique([name, type])
+}
+
+model SpecialZoneCell {
+  id     String @id @default(cuid())
+  zoneId String
+  cellId String
+
+  zone SpecialZone @relation(fields: [zoneId], references: [id], onDelete: Cascade)
+  cell Cell        @relation(fields: [cellId], references: [id], onDelete: Cascade)
+
+  @@unique([zoneId, cellId])
+}
+
+model Move {
+  id          String   @id @default(cuid())
+  gameId      String
+  turnNumber  Int
+  phaseNumber Int
+  playerId    String
+  cellId      String
+  occupied    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  game   Game   @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  player Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  cell   Cell   @relation(fields: [cellId], references: [id], onDelete: Cascade)
+
+  @@unique([gameId, turnNumber, phaseNumber, playerId, cellId])
+  @@index([gameId, turnNumber, phaseNumber])
+  @@index([playerId, turnNumber, phaseNumber])
+}
+
+model PhaseSubmission {
+  id          String   @id @default(cuid())
+  gameId      String
+  turnNumber  Int
+  phaseNumber Int
+  playerId    String
+  submittedAt DateTime @default(now())
+
+  game   Game   @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  player Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  @@unique([gameId, turnNumber, phaseNumber, playerId])
+  @@index([gameId, turnNumber, phaseNumber])
+}
+
+model Encounter {
+  id              String    @id @default(cuid())
+  gameId          String
+  turnNumber      Int
+  phaseNumber     Int
+  cellId          String
+  sumCode         Int
+  status          String    @default("pending")
+  resolutionNotes String?
+  winnerPlayerId  String?
+  createdAt       DateTime  @default(now())
+  resolvedAt      DateTime?
+
+  game          Game                       @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  cell          Cell                       @relation(fields: [cellId], references: [id], onDelete: Cascade)
+  winnerPlayer  Player?                    @relation("EncounterWinner", fields: [winnerPlayerId], references: [id])
+  participants  EncounterParticipant[]
+  confirmations EncounterResolutionConfirmation[]
+
+  @@unique([gameId, turnNumber, phaseNumber, cellId])
+  @@index([gameId, turnNumber, phaseNumber])
+  @@index([status])
+}
+
+model EncounterParticipant {
+  id          String @id @default(cuid())
+  encounterId String
+  playerId    String
+
+  encounter Encounter @relation(fields: [encounterId], references: [id], onDelete: Cascade)
+  player    Player    @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  @@unique([encounterId, playerId])
+  @@index([playerId])
+}
+
+model EncounterResolutionConfirmation {
+  id          String   @id @default(cuid())
+  encounterId String
+  playerId    String
+  confirmedAt DateTime @default(now())
+
+  encounter Encounter @relation(fields: [encounterId], references: [id], onDelete: Cascade)
+  player    Player    @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  @@unique([encounterId, playerId])
+}
+
+model PhaseAnnouncement {
+  id          String   @id @default(cuid())
+  gameId      String
+  turnNumber  Int
+  phaseNumber Int
+  type        String
+  cellId      String?
+  message     String
+  visibility  String
+  createdAt   DateTime @default(now())
+
+  game Game  @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  cell Cell? @relation(fields: [cellId], references: [id])
+
+  @@index([gameId, turnNumber, phaseNumber])
+  @@index([visibility])
+}
