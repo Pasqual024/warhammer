@@ -38,7 +38,7 @@ export function LoginClient() {
     <main className="login-page">
       <section className="login-panel">
         <div className="login-heading">
-          <h1 className="login-title">CAMPAÑA ISLA DEL MAL</h1>
+          <h1 className="login-title">LA SOMBRA DE LYRTHAR</h1>
         </div>
 
         <form className="form-grid" onSubmit={submit}>

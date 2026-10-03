@@ -86,8 +86,8 @@ describe("profile tab calculations", () => {
               id: "a1",
               name: "A",
               rows: [
-                { campaignGeneral: "Thalandor", unitType: "Arquero", kills: "12" },
-                { campaignGeneral: "Bosque", unitType: "Explorador", kills: "abc" }
+                { campaignGeneral: "Thalandor", unitName: "Guardia del Bosque", unitType: "Arquero", kills: "12" },
+                { campaignGeneral: "Bosque", unitName: "Exploradores", unitType: "Explorador", kills: "abc" }
               ]
             }
           ]
@@ -101,8 +101,8 @@ describe("profile tab calculations", () => {
               id: "a2",
               name: "B",
               rows: [
-                { campaignGeneral: "Aenarion", unitType: "Lanza", kills: "14" },
-                { campaignGeneral: "Otro", unitType: "Guardia", kills: "" }
+                { campaignGeneral: "Aenarion", unitName: "Lanceros de Plata", unitType: "Lanza", kills: "14" },
+                { campaignGeneral: "Otro", unitName: "Guardia del Mar", unitType: "Guardia", kills: "" }
               ]
             }
           ]
@@ -111,8 +111,8 @@ describe("profile tab calculations", () => {
     ]);
 
     assert.deepEqual(ranking, [
-      { userName: "Altos", campaignGeneralName: "Aenarion", unitType: "Lanza", kills: 14 },
-      { userName: "Silvanos", campaignGeneralName: "Thalandor", unitType: "Arquero", kills: 12 }
+      { userName: "Altos", unitName: "Lanceros de Plata", unitType: "Lanza", kills: 14 },
+      { userName: "Silvanos", unitName: "Guardia del Bosque", unitType: "Arquero", kills: 12 }
     ]);
   });
 

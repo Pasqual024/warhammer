@@ -24,7 +24,7 @@ export type KillsRankingSource = {
 
 export type KillsRankingItem = {
   userName: string;
-  campaignGeneralName: string;
+  unitName: string;
   unitType: string;
   kills: number;
 };
@@ -250,7 +250,7 @@ export function getTopKillsRanking(sources: KillsRankingSource[] = []): KillsRan
       source.armyList.armies.flatMap((army, armyIndex) =>
         army.rows.map((row, rowIndex) => ({
           userName: source.userName,
-          campaignGeneralName: String(row.campaignGeneral ?? ""),
+          unitName: String(row.unitName ?? ""),
           unitType: String(row.unitType ?? ""),
           kills: toNumber(row.kills),
           stableIndex: `${sourceIndex}:${armyIndex}:${rowIndex}`
@@ -268,15 +268,15 @@ export function getTopKillsRanking(sources: KillsRankingSource[] = []): KillsRan
         return byUser;
       }
 
-      const byGeneral = a.campaignGeneralName.localeCompare(b.campaignGeneralName);
-      if (byGeneral !== 0) {
-        return byGeneral;
+      const byUnit = a.unitName.localeCompare(b.unitName);
+      if (byUnit !== 0) {
+        return byUnit;
       }
 
       return a.stableIndex.localeCompare(b.stableIndex);
     })
     .slice(0, 5)
-    .map(({ userName, campaignGeneralName, unitType, kills }) => ({ userName, campaignGeneralName, unitType, kills }));
+    .map(({ userName, unitName, unitType, kills }) => ({ userName, unitName, unitType, kills }));
 }
 
 export function getTopExperienceRanking(sources: ExperienceRankingSource[] = []): ExperienceRankingItem[] {

@@ -481,7 +481,7 @@ export async function getMyEncounters(playerId: string, role: string) {
   });
 }
 
-export async function getVisibleEncounterCells() {
+export async function getVisibleEncounterCells(playerId: string) {
   const game = await getActiveGame();
 
   if (!canShowEncounterCells(game.currentState)) {
@@ -492,7 +492,12 @@ export async function getVisibleEncounterCells() {
   }
 
   const encounters = await prisma.encounter.findMany({
-    where: phaseWhere(game),
+    where: {
+      ...phaseWhere(game),
+      participants: {
+        some: { playerId }
+      }
+    },
     select: {
       cellId: true
     },

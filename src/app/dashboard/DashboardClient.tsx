@@ -67,7 +67,7 @@ type VisibleEncounterCells = {
 
 type KillsRankingItem = {
   userName: string;
-  campaignGeneralName: string;
+  unitName: string;
   unitType: string;
   kills: number;
 };
@@ -400,16 +400,16 @@ export function DashboardClient() {
                   <thead>
                     <tr>
                       <th>Usuario</th>
-                      <th>Nombre de General Campaña</th>
+                      <th>Nombre Unidades</th>
                       <th>Tipo de Unidad</th>
                       <th>Muertes</th>
                     </tr>
                   </thead>
                   <tbody>
                     {killsRanking.map((item, index) => (
-                      <tr key={`${item.userName}-${item.campaignGeneralName}-${item.unitType}-${index}`}>
+                      <tr key={`${item.userName}-${item.unitName}-${item.unitType}-${index}`}>
                         <td>{item.userName || "—"}</td>
-                        <td>{item.campaignGeneralName || "—"}</td>
+                        <td>{item.unitName || "—"}</td>
                         <td>{item.unitType || "—"}</td>
                         <td>{item.kills}</td>
                       </tr>
